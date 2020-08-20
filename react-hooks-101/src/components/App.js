@@ -1,6 +1,6 @@
 import React, { useState, useReducer } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Event from "./Event"
+import Event from "./Event";
 import reducer from "../reducers/index.js";
 
 const App = () => {
@@ -19,6 +19,12 @@ const App = () => {
     setBody("");
   };
 
+  const deleteAllEvents = (e) => {
+    e.preventDefault();
+    const result = window.confirm("すべてのイベントを本当に削除しても良いですか？");
+    if (result) dispatch({ type: "DELETE_ALL_EVENTS" });
+  };
+  const unCreatable = title === "" || body === "";
 
   return (
     <div className="container-fluid">
@@ -42,10 +48,20 @@ const App = () => {
             onChange={(e) => setBody(e.target.value)}
           />
         </div>
-        <button className="btn btn-primary" onClick={addEvent}>
+        <button
+          className="btn btn-primary"
+          disabled={unCreatable}
+          onClick={addEvent}
+        >
           イベントを作成する
         </button>
-        <button className="btn btn-danger">全てのイベントを削除する</button>
+        <button
+          className="btn btn-danger"
+          disabled={state.length === 0}
+          onClick={deleteAllEvents}
+        >
+          全てのイベントを削除する
+        </button>
       </form>
       <h4>イベント一覧</h4>
       <table className="table table-hover">
@@ -58,7 +74,9 @@ const App = () => {
           </tr>
         </thead>
         <tbody>
-          { state.map((event, index) => <Event key={index} event={event} dispatch={dispatch}/>)}
+          {state.map((event, index) => (
+            <Event key={index} event={event} dispatch={dispatch} />
+          ))}
         </tbody>
       </table>
     </div>
